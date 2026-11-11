@@ -4,6 +4,8 @@ export const site = {
   url: 'https://www.intracoastalcleaning.com',
   email: 'info@intracoastalcleaning.com',
   phone: '', // e.g. '(910) 555-0123' — shown in header/footer with tap-to-call when set
+  // Lowest house-cleaning price, shown as “from $149” across the site. Set to 0 to hide.
+  priceFrom: 149,
   // Web3Forms access key (public by design). Leads are emailed to the address the key was created with (owner's Gmail).
   web3formsKey: '3699b9e4-30e7-45bf-80cc-e175d2fe84f8',
   areas: ['Wilmington', 'Wrightsville Beach', 'Carolina Beach', 'Leland', 'Hampstead', 'Porters Neck', 'Ogden', 'Monkey Junction'],
