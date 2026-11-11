@@ -100,7 +100,7 @@ Once everything is clean:
 
 Move-out cleaning is time-consuming. A typical two-bedroom apartment takes 4–6 hours to clean properly. If you're short on time, exhausted from packing, or just want the peace of mind that comes with a guaranteed clean, professional move-out cleaning is worth considering.
 
-At Intracoastal Cleaning, we handle move-out cleans throughout Wilmington, Leland, and the surrounding area. We know what local property managers look for, and we'll make sure you leave your rental in deposit-ready condition.
+At Intracoastal Cleaning, we handle [move-out cleaning](/move-out-cleaning) throughout Wilmington, [Leland](/areas/leland-nc), and the surrounding area. We know what local property managers look for, and we'll make sure you leave your rental in deposit-ready condition.
 
 [Get a free move-out cleaning estimate.](/contact)
 

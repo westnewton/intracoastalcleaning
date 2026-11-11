@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { site, img } from './site.config.mjs';
+import { TOWNS } from './content/areas.mjs';
 
 const DIST = 'dist';
 fs.rmSync(DIST, { recursive: true, force: true });
@@ -23,6 +24,9 @@ const WAVES = `<path d="M4 20c9-9 17-9 26 0s17 9 26 0" stroke="#4FA3B5"/><path d
 const logo = (light = false) => `<svg viewBox="0 0 300 64" role="img" aria-label="${site.name}" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-width="5.5" stroke-linecap="round">${light ? WAVES.replace('#1A5D6B', '#9CC9D3') : WAVES}</g><text x="72" y="34" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="${light ? '#fff' : '#0E3B45'}">Intracoastal</text><text x="73" y="55" font-family="'DM Sans', Arial, sans-serif" font-size="13.5" letter-spacing="4.2" fill="${light ? '#9CC9D3' : '#1A5D6B'}">CLEANING</text></svg>`;
 const check = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>`;
 
+const PRICE_FROM = site.priceFrom; // e.g. 149 → shown as “from $149”
+const priceText = PRICE_FROM ? `$${PRICE_FROM}` : '';
+
 const NAV = [
   ['/residential-services', 'Residential'],
   ['/commercial-services', 'Commercial'],
@@ -39,6 +43,7 @@ const orgSchema = {
   url: site.url,
   email: site.email,
   ...(site.phone ? { telephone: site.phone } : {}),
+  ...(PRICE_FROM ? { priceRange: `From $${PRICE_FROM}` } : {}),
   logo: site.url + '/logo.svg',
   image: img('photo-1582836080262-088c42e984c7', 1200),
   description: 'Locally owned residential, commercial, and specialty cleaning in Wilmington, NC. Residential services use 100% organic products.',
@@ -74,6 +79,8 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="preconnect" href="https://images.unsplash.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 ${jsonld}
 </head>
 <body>
@@ -98,8 +105,14 @@ ${body}
       <div><h4>Services</h4><ul>
         <li><a href="/residential-services">Residential cleaning</a></li>
         <li><a href="/commercial-services">Commercial cleaning</a></li>
-        <li><a href="/specialty-services">Move-out &amp; post-construction</a></li>
-        <li><a href="/specialty-services#airbnb">Airbnb turnovers</a></li>
+        <li><a href="/move-out-cleaning">Move-out cleaning</a></li>
+        <li><a href="/post-construction-cleaning">Post-construction cleaning</a></li>
+        <li><a href="/vacation-rental-cleaning">Vacation rental cleaning</a></li>
+        <li><a href="/specialty-services">Specialty cleaning</a></li>
+      </ul></div>
+      <div><h4>Service areas</h4><ul>
+        <li><a href="/">Wilmington</a></li>
+        ${TOWNS.map((t) => `<li><a href="/areas/${t.slug}">${t.name}</a></li>`).join('')}
       </ul></div>
       <div><h4>Company</h4><ul>
         <li><a href="/about">About us</a></li>
@@ -136,7 +149,8 @@ const trust = `<div class="trust"><div class="wrap"><ul>
 <li>${check}Locally owned in Wilmington</li><li>${check}Fully licensed &amp; insured</li><li>${check}Background-checked team</li><li>${check}100% satisfaction guarantee</li>
 </ul></div></div>`;
 
-const areasList = (list = site.areas) => `<ul class="areas">${list.map((a) => `<li>${a}</li>`).join('')}</ul>`;
+const townHref = (name) => { if (name === 'Wilmington') return '/'; const t = TOWNS.find((x) => x.name === name); return t ? '/areas/' + t.slug : ''; };
+const areasList = (list = site.areas) => `<ul class="areas">${list.map((a) => (townHref(a) ? `<li><a href="${townHref(a)}">${a}</a></li>` : `<li>${a}</li>`)).join('')}</ul>`;
 
 const faq = (items) => `<div class="faq">${items.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`;
 const faqSchema = (items) => ({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) });
@@ -174,7 +188,7 @@ const quoteForm = (preset = '') => `
   </form>
 </div>`;
 
-const quoteSection = (alt = true) => `
+const quoteSection = (alt = true, preset = '') => `
 <section class="section${alt ? ' section-alt' : ''}" id="quote">
   <div class="wrap quote">
     <div class="quote-aside">
@@ -183,6 +197,7 @@ const quoteSection = (alt = true) => `
       <p class="lede">Residential, commercial or a one-time job—tell us what you need and we’ll put together a clear, no-pressure quote.</p>
       <ul class="checks">
         <li>Reply usually within 24 hours</li>
+        ${PRICE_FROM ? `<li>House cleaning from ${priceText}</li>` : ''}
         <li>100% organic products for homes</li>
         <li>Fully licensed, insured &amp; background-checked</li>
         <li>Not happy? We come back and fix it—free</li>
@@ -192,7 +207,7 @@ const quoteSection = (alt = true) => `
         <div>Email: <a href="mailto:${site.email}">${site.email}</a></div>
       </div>
     </div>
-    ${quoteForm()}
+    ${quoteForm(preset)}
   </div>
 </section>`;
 
@@ -232,18 +247,18 @@ const pages = {};
 
 pages['/'] = layout({
   route: '/',
-  title: 'Intracoastal Cleaning | Wilmington, NC House & Office Cleaning',
-  description: 'Residential, commercial, and specialty cleaning in Wilmington, NC. Our residential services use 100% organic products. Locally owned. Free estimates.',
+  title: 'Cleaning Services in Wilmington, NC | Intracoastal Cleaning',
+  description: `House cleaning, maid service and commercial cleaning in Wilmington, NC. Organic products for homes${PRICE_FROM ? `, house cleaning from ${priceText}` : ''}. Locally owned. Free quotes.`,
   body: `
-${hero({ image: 'photo-1582836080262-088c42e984c7', alt: 'Wooden pier stretching into the ocean on a clear day', eyebrow: 'Wilmington · Wrightsville Beach · Cape Fear', title: 'Spotless homes.<br>Professional spaces.', text: 'Locally owned house, office and specialty cleaning across the Cape Fear coast. Our residential service uses 100% organic products—safe for kids, pets and the planet.', small: false })}
+${hero({ image: 'photo-1582836080262-088c42e984c7', alt: 'Wooden pier stretching into the ocean on a clear day', eyebrow: 'Cleaning services in Wilmington, NC', title: 'Spotless homes.<br>Professional spaces.', text: `Locally owned house, office and specialty cleaning across the Cape Fear coast. Our residential service uses 100% organic products—safe for kids, pets and the planet.${PRICE_FROM ? ` House cleaning from ${priceText}.` : ''}`, small: false })}
 ${trust}
 <section class="section">
   <div class="wrap">
     <div class="section-head center"><span class="eyebrow">What we do</span><h2>Cleaning for every kind of space</h2><p class="lede">Recurring service, deep cleans, or the one-time jobs that need extra attention.</p></div>
     <div class="cards">
-      <a class="card" href="/residential-services"><img src="${img('photo-1584622650111-993a426fbf0a', 700, 525)}" alt="Modern bathroom with walk-in glass shower and gray vanity" loading="lazy" width="700" height="525"><div class="card-body"><h3>Residential</h3><p>A healthier clean for your home with 100% organic products. Recurring service, deep cleans, or one-time visits.</p><span class="card-link">House cleaning →</span></div></a>
+      <a class="card" href="/residential-services"><img src="${img('photo-1584622650111-993a426fbf0a', 700, 525)}" alt="Modern bathroom with walk-in glass shower and gray vanity" loading="lazy" width="700" height="525"><div class="card-body"><h3>Residential</h3><p>A healthier clean for your home with 100% organic products. Recurring service, deep cleans, or one-time visits.${PRICE_FROM ? ` From ${priceText}.` : ''}</p><span class="card-link">House cleaning →</span></div></a>
       <a class="card" href="/commercial-services"><img src="${img('photo-1497215728101-856f4ea42174', 700, 525)}" alt="Bright office with large windows, a tall plant and a laptop" loading="lazy" width="700" height="525"><div class="card-body"><h3>Commercial</h3><p>Offices, retail and medical facilities kept spotless on your schedule. Consistent crews, reliable results, fully insured.</p><span class="card-link">Commercial cleaning →</span></div></a>
-      <a class="card" href="/specialty-services"><img src="${img('photo-1686178827149-6d55c72d81df', 700, 525)}" alt="Cleaner vacuuming a gray upholstered couch" loading="lazy" width="700" height="525"><div class="card-body"><h3>Specialty</h3><p>Move-outs, post-construction, Airbnb turnovers and deep cleans—for the jobs that need extra detail.</p><span class="card-link">Specialty cleaning →</span></div></a>
+      <a class="card" href="/specialty-services"><img src="${img('photo-1686178827149-6d55c72d81df', 700, 525)}" alt="Cleaner vacuuming a gray upholstered couch" loading="lazy" width="700" height="525"><div class="card-body"><h3>Specialty</h3><p>Move-outs, post-construction, vacation rental turnovers and deep cleans—for the jobs that need extra detail.</p><span class="card-link">Specialty cleaning →</span></div></a>
     </div>
   </div>
 </section>
@@ -294,6 +309,7 @@ ${quoteSection()}`,
 
 // Residential
 const resFaq = [
+  ...(PRICE_FROM ? [['How much does house cleaning cost?', `House cleaning starts at ${priceText}. Your exact price depends on the size of your home, its current condition, and whether you need a standard or deep clean. Tell us about your home and we’ll send a clear, no-pressure quote—usually within 24 hours.`]] : []),
   ['Do I need to be home during the cleaning?', 'Nope. Many of our clients give us a key or garage code. We’re fully insured and background-checked, and we’ll lock up when we leave.'],
   ['How long does a cleaning take?', 'It depends on the size of your home and the service level. A standard clean for a typical 3-bedroom home takes about 2–3 hours. Deep cleans take longer.'],
   ['Do you bring your own supplies?', 'Yes. We bring all organic products and equipment. If you have specific products you’d like us to use, just let us know.'],
@@ -303,11 +319,11 @@ const resFaq = [
 ];
 pages['/residential-services'] = layout({
   route: '/residential-services',
-  title: 'Organic House Cleaning in Wilmington, NC | Intracoastal Cleaning',
-  description: 'Safe, eco-friendly house cleaning using 100% organic products. Recurring maid service, deep cleans, and move-in/move-out cleaning for Wilmington-area homes. Free estimates.',
-  schema: [faqSchema(resFaq), breadcrumbSchema([['Home', '/'], ['Residential cleaning', '/residential-services']]), { '@context': 'https://schema.org', '@type': 'Service', serviceType: 'House cleaning', provider: { '@id': site.url + '/#business' }, areaServed: site.areas.map((a) => `${a}, NC`), description: 'Recurring, deep and customized house cleaning using 100% organic products.' }],
+  title: 'Organic House Cleaning & Maid Service in Wilmington, NC',
+  description: `Organic house cleaning and maid service in Wilmington, NC${PRICE_FROM ? `, from ${priceText}` : ''}. Recurring, deep and move-out cleaning with 100% organic products. Free quotes.`,
+  schema: [faqSchema(resFaq), breadcrumbSchema([['Home', '/'], ['Residential cleaning', '/residential-services']]), { '@context': 'https://schema.org', '@type': 'Service', serviceType: 'House cleaning', provider: { '@id': site.url + '/#business' }, areaServed: site.areas.map((a) => `${a}, NC`), description: 'Recurring, deep and customized house cleaning using 100% organic products.', ...(PRICE_FROM ? { offers: { '@type': 'Offer', priceCurrency: 'USD', priceSpecification: { '@type': 'PriceSpecification', minPrice: PRICE_FROM, priceCurrency: 'USD' } } } : {}) }],
   body: `
-${hero({ image: 'photo-1583847268964-b28dc8f51f92', alt: 'Bright living room with a gray sofa, coffee tables and houseplants', eyebrow: 'Residential cleaning', title: 'A cleaner home—without the chemicals', text: 'Our residential team uses 100% organic products. Safe for your family, your pets, and the Carolina coast we all love.' })}
+${hero({ image: 'photo-1583847268964-b28dc8f51f92', alt: 'Bright living room with a gray sofa, coffee tables and houseplants', eyebrow: 'House cleaning &amp; maid service', title: 'A cleaner home—without the chemicals', text: `Our residential team uses 100% organic products. Safe for your family, your pets, and the Carolina coast we all love.${PRICE_FROM ? ` House cleaning from ${priceText}.` : ''}` })}
 ${trust}
 <section class="section">
   <div class="wrap split">
@@ -322,7 +338,7 @@ ${trust}
 </section>
 <section class="section section-alt">
   <div class="wrap">
-    <div class="section-head"><span class="eyebrow">Our services</span><h2>Choose the clean that fits</h2></div>
+    <div class="section-head"><span class="eyebrow">Our services</span><h2>Choose the clean that fits</h2>${PRICE_FROM ? `<p class="lede">House cleaning starts at <strong>${priceText}</strong>. Your quote depends on your home’s size, condition and the service you choose.</p>` : ''}</div>
     <div class="service"><div><h3>Standard Clean</h3><p class="tag">Our go-to service for regular home maintenance.</p></div><div><p>We’ll tackle the essentials so you can spend your time on what matters.</p><ul class="checks"><li><strong>Kitchen:</strong> counters, appliances (exterior), sink, floors</li><li><strong>Bathrooms:</strong> toilet, shower/tub, sink, mirrors, floors</li><li><strong>Living areas:</strong> dusting, vacuuming, mopping</li><li><strong>Bedrooms:</strong> dusting, vacuuming, making beds</li><li>Trash removal and general tidying</li></ul><p class="best"><strong>Best for:</strong> Busy households looking to maintain a clean baseline week to week.</p></div></div>
     <div class="service"><div><h3>Deep Clean</h3><p class="tag">A top-to-bottom reset for your home.</p></div><div><p>We go beyond the surface to clean the spots that get missed in day-to-day life. Everything in Standard Clean, plus:</p><ul class="checks"><li>Inside appliances (oven, microwave, refrigerator)</li><li>Baseboards and door frames</li><li>Light fixtures and ceiling fans</li><li>Inside cabinets and drawers (on request)</li><li>Window sills and tracks</li><li>Detailed scrubbing in kitchens and baths</li></ul><p class="best"><strong>Best for:</strong> First-time clients, seasonal refreshes, post-holiday recovery, or anyone ready for a fresh start.</p></div></div>
     <div class="service"><div><h3>Customized</h3><p class="tag">Built around your household.</p></div><div><p>We’re here to serve you. Whether it’s pets, children, or a busy household, let us know how we can best clean and organize your space—and we’ll build the visit around it.</p><a class="btn btn-primary" href="/contact">Tell us what you need</a></div></div>
@@ -353,11 +369,11 @@ ${trust}
 </section>
 <section class="section">
   <div class="wrap split" style="align-items:start">
-    <div><span class="eyebrow">Service areas</span><h2>Homes across the Cape Fear region</h2>${areasList(['Wilmington', 'Wrightsville Beach', 'Hampstead', 'Porters Neck', 'Ogden', 'Monkey Junction'])}<p style="color:var(--muted)">Not sure if we cover your area? <a href="/contact">Just ask</a>—we’re happy to work with you.</p></div>
+    <div><span class="eyebrow">Service areas</span><h2>Homes across the Cape Fear region</h2>${areasList()}<p style="color:var(--muted)">Not sure if we cover your area? <a href="/contact">Just ask</a>—we’re happy to work with you.</p></div>
     <div><span class="eyebrow">FAQ</span><h2>Frequently asked questions</h2>${faq(resFaq)}</div>
   </div>
 </section>
-${quoteSection()}`,
+${quoteSection(true, 'House cleaning')}`,
 });
 
 // Commercial
@@ -370,7 +386,7 @@ const comFaq = [
 ];
 pages['/commercial-services'] = layout({
   route: '/commercial-services',
-  title: 'Commercial Cleaning Services in Wilmington, NC | Intracoastal Cleaning',
+  title: 'Commercial & Office Cleaning in Wilmington, NC',
   description: 'Reliable office, retail, and medical facility cleaning in the Wilmington area. Flexible scheduling, consistent results. Locally owned and fully insured. Request a quote.',
   schema: [faqSchema(comFaq), breadcrumbSchema([['Home', '/'], ['Commercial cleaning', '/commercial-services']]), { '@context': 'https://schema.org', '@type': 'Service', serviceType: 'Commercial cleaning', provider: { '@id': site.url + '/#business' }, areaServed: site.areas.map((a) => `${a}, NC`), description: 'Office, retail, medical, property management and light industrial cleaning.' }],
   body: `
@@ -385,7 +401,7 @@ ${trust}
       <div class="feature"><h3>Medical &amp; dental offices</h3><p>Healthcare facilities require a higher standard. Our team is trained in proper sanitation protocols for patients and staff.</p></div>
       <div class="feature"><h3>Property management &amp; common areas</h3><p>Apartment lobbies, HOA clubhouses, shared hallways—routine maintenance or turnover cleans between tenants.</p></div>
       <div class="feature"><h3>Warehouse &amp; light industrial</h3><p>Break rooms, restrooms, and office areas within industrial spaces, on a regular schedule.</p></div>
-      <div class="feature"><h3>Post-construction</h3><p>Fine dust, paint overspray and debris removed so your new or renovated space is ready to open. <a href="/specialty-services#post-construction">Learn more</a></p></div>
+      <div class="feature"><h3>Post-construction</h3><p>Fine dust, paint overspray and debris removed so your new or renovated space is ready to open. <a href="/post-construction-cleaning">Learn more</a></p></div>
     </div>
   </div>
 </section>
@@ -426,7 +442,7 @@ ${trust}
     <div><span class="eyebrow">FAQ</span><h2>Frequently asked questions</h2>${faq(comFaq)}</div>
   </div>
 </section>
-${quoteSection(false)}`,
+${quoteSection(false, 'Office / commercial cleaning')}`,
 });
 
 // Specialty
@@ -449,9 +465,9 @@ ${trust}
 <section class="section">
   <div class="wrap">
     <div class="section-head"><span class="eyebrow">Our services</span><h2>One-time jobs, done like an inspection is coming</h2><p class="lede">We bring the crew, the equipment, and the detail-oriented approach these high-stakes situations require.</p></div>
-    ${specSvc('move-out', 'Move-Out &amp; Move-In Cleaning', 'Moving is stressful enough. Let us handle the cleaning.', '<p>Move-out cleans help you get your deposit back and leave on good terms with landlords or buyers. We clean every surface, inside every cabinet, and behind every appliance—the details that get checked. Move-in cleans give you a fresh start before you unpack.</p>', 'What’s included:', ['Full kitchen deep clean (inside appliances, cabinets, drawers)', 'Bathroom sanitization and grout cleaning', 'Interior windows and window sills', 'Baseboards, door frames, and light switches', 'Ceiling fans and light fixtures', 'Closet interiors', 'Garage sweep-out (on request)'], '<p><a href="/blog/the-ultimate-move-out-cleaning-checklist-for-wilmington-renters">See our move-out cleaning checklist →</a></p>')}
-    ${specSvc('post-construction', 'Post-Construction Cleanup', 'Contractors build. We clean up after.', '<p>Renovations and new builds leave behind dust, debris, and chaos that regular cleaning can’t touch. We remove the fine dust from every surface, clean paint splatters and adhesive residue, and get your space move-in ready.</p>', 'We handle:', ['Fine dust removal from all surfaces, including walls and ceilings', 'Window and glass cleaning (interior)', 'Paint overspray and sticker/label removal', 'Cabinet and fixture cleaning (inside and out)', 'Floor cleaning and debris removal', 'Final detail work before walkthrough or move-in'], '<p class="best"><strong>Ideal for:</strong> General contractors, homeowners finishing renovations, property managers, and real estate agents preparing listings.</p>')}
-    ${specSvc('airbnb', 'Airbnb &amp; Vacation Rental Turnover', 'Your next guest might book tonight.', '<p>Fast, reliable turnover cleaning keeps your reviews high and your calendar full. We work with short-term rental hosts on same-day turnovers—fresh linens, spotless bathrooms, and the small touches that earn five-star reviews.</p>', 'Our turnover service includes:', ['Full bathroom and kitchen cleaning', 'Linen change and bed making (linens provided by host)', 'Restocking toiletries and supplies (provided by host)', 'Trash removal and dish washing', 'Surface wipe-down throughout', 'Floor cleaning', 'Quick inspection for damage or maintenance issues'], '<p class="best"><strong>Scheduling:</strong> Same-day availability for most turnovers. Regular hosts can set up recurring service tied to their booking calendar.</p>')}
+    ${specSvc('move-out', 'Move-Out &amp; Move-In Cleaning', 'Moving is stressful enough. Let us handle the cleaning.', '<p>Move-out cleans help you get your deposit back and leave on good terms with landlords or buyers. We clean every surface, inside every cabinet, and behind every appliance—the details that get checked. Move-in cleans give you a fresh start before you unpack.</p>', 'What’s included:', ['Full kitchen deep clean (inside appliances, cabinets, drawers)', 'Bathroom sanitization and grout cleaning', 'Interior windows and window sills', 'Baseboards, door frames, and light switches', 'Ceiling fans and light fixtures', 'Closet interiors', 'Garage sweep-out (on request)'], '<p><a href="/move-out-cleaning">More about move-out cleaning →</a></p>')}
+    ${specSvc('post-construction', 'Post-Construction Cleanup', 'Contractors build. We clean up after.', '<p>Renovations and new builds leave behind dust, debris, and chaos that regular cleaning can’t touch. We remove the fine dust from every surface, clean paint splatters and adhesive residue, and get your space move-in ready.</p>', 'We handle:', ['Fine dust removal from all surfaces, including walls and ceilings', 'Window and glass cleaning (interior)', 'Paint overspray and sticker/label removal', 'Cabinet and fixture cleaning (inside and out)', 'Floor cleaning and debris removal', 'Final detail work before walkthrough or move-in'], '<p class="best"><strong>Ideal for:</strong> General contractors, homeowners finishing renovations, property managers, and real estate agents preparing listings.</p><p><a href="/post-construction-cleaning">More about post-construction cleaning →</a></p>')}
+    ${specSvc('airbnb', 'Airbnb &amp; Vacation Rental Turnover', 'Your next guest might book tonight.', '<p>Fast, reliable turnover cleaning keeps your reviews high and your calendar full. We work with short-term rental hosts on same-day turnovers—fresh linens, spotless bathrooms, and the small touches that earn five-star reviews.</p>', 'Our turnover service includes:', ['Full bathroom and kitchen cleaning', 'Linen change and bed making (linens provided by host)', 'Restocking toiletries and supplies (provided by host)', 'Trash removal and dish washing', 'Surface wipe-down throughout', 'Floor cleaning', 'Quick inspection for damage or maintenance issues'], '<p class="best"><strong>Scheduling:</strong> Same-day availability for most turnovers. Regular hosts can set up recurring service tied to their booking calendar.</p><p><a href="/vacation-rental-cleaning">More about vacation rental cleaning →</a></p>')}
     ${specSvc('deep-cleaning', 'Deep Cleaning', 'Sometimes a home just needs a reset.', '<p>Our deep cleaning goes beyond the surface to tackle buildup that accumulates over time—inside the oven, behind the refrigerator, in the grout lines, under the furniture.</p>', 'What’s included:', ['Detailed kitchen cleaning (inside oven, microwave, refrigerator)', 'Bathroom deep scrub (grout, tile, fixtures, exhaust fans)', 'Baseboard and door frame cleaning', 'Interior window cleaning', 'Ceiling fan and light fixture dusting', 'Under and behind furniture', 'Cabinet fronts and hardware'], '<p class="best"><strong>Best for:</strong> First-time clients before recurring service, seasonal refreshes, homes that haven’t been professionally cleaned in a while, or preparing a home for sale or guests.</p>')}
     ${specSvc('estate', 'Estate Cleanout Support', 'Handled with care and discretion.', '<p>Clearing a loved one’s home is hard. After the belongings are sorted and removed, we come in to clean the space—preparing it for sale, rental, or the next chapter.</p>', 'Our estate cleaning includes:', ['Full interior cleaning after cleanout', 'Deep cleaning of kitchens and bathrooms', 'Removal of remaining small debris', 'Carpet and floor cleaning', 'Odor treatment if needed', 'Preparing the home for listing or new occupants'])}
     ${specSvc('hoarding', 'Hoarding Cleanup', 'Patient, discreet and non-judgmental.', '<p>We work with families and individuals to restore spaces that have become overwhelming. Every job is handled with care.</p>', 'Our approach:', ['Discreet, unmarked vehicles', 'Compassionate, respectful crews', 'Coordination with junk removal services if needed', 'Deep cleaning and sanitization after cleanout', 'Odor treatment and air quality improvement'])}
@@ -582,6 +598,225 @@ for (const p of posts) {
   </div>
 </article>
 <section class="section section-alt"><div class="wrap"><div class="section-head"><h2>More from the blog</h2></div><div class="cards">${others.map(postCard).join('')}</div></div></section>`,
+  });
+}
+
+// ---------- dedicated service pages ----------
+const SERVICE_LINKS = {
+  house: ['/residential-services', 'House cleaning', 'Recurring and one-time house cleaning with 100% organic products.'],
+  deep: ['/specialty-services#deep-cleaning', 'Deep cleaning', 'A top-to-bottom reset: inside appliances, baseboards, fans and grout.'],
+  moveout: ['/move-out-cleaning', 'Move-out cleaning', 'Deposit-ready detail inside every cabinet and appliance.'],
+  rental: ['/vacation-rental-cleaning', 'Vacation rental cleaning', 'Same-day turnovers and pre-season deep cleans for hosts.'],
+  construction: ['/post-construction-cleaning', 'Post-construction cleaning', 'Fine dust, residue and stickers removed so the space is move-in ready.'],
+  commercial: ['/commercial-services', 'Commercial cleaning', 'Offices, retail and medical spaces on your schedule.'],
+};
+const serviceTiles = (keys) => `<div class="features${keys.length === 4 ? ' features-2' : ''}">${keys.map((k) => { const [href, name, text] = SERVICE_LINKS[k]; return `<a class="feature feature-link" href="${href}"><h3>${name}</h3><p>${text}</p><span class="card-link">Learn more →</span></a>`; }).join('')}</div>`;
+const checkGroups = (groups) => `<div class="features${groups.length === 4 ? ' features-2' : ''}">${groups.map(([h, items]) => `<div class="feature"><h3>${h}</h3><ul class="checks" style="margin:10px 0 0">${items.map((i) => `<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>`;
+const steps = (items) => `<div class="steps">${items.map(([h, t]) => `<div class="step"><h3>${h}</h3><p>${t}</p></div>`).join('')}</div>`;
+
+function servicePage({ route, title, description, crumb, serviceType, schemaDescription, heroOpts, body, faqItems, preset }) {
+  pages[route] = layout({
+    route, title, description,
+    schema: [
+      faqSchema(faqItems),
+      breadcrumbSchema([['Home', '/'], ['Specialty cleaning', '/specialty-services'], [crumb, route]]),
+      { '@context': 'https://schema.org', '@type': 'Service', serviceType, provider: { '@id': site.url + '/#business' }, areaServed: site.areas.map((a) => `${a}, NC`), description: schemaDescription },
+    ],
+    body: `
+${hero(heroOpts)}
+${trust}
+${body}
+<section class="section">
+  <div class="narrow"><div class="section-head"><span class="eyebrow">FAQ</span><h2>Frequently asked questions</h2></div>${faq(faqItems)}</div>
+</section>
+${quoteSection(true, preset)}`,
+  });
+}
+
+// Move-out
+const moveFaq = [
+  ['How much does move-out cleaning cost?', 'Pricing depends on the size and condition of the home. Most move-out cleans range from $200–$500. We provide free quotes.'],
+  ['Should the home be empty?', 'It’s best if furniture and boxes are already out—that’s when we can reach inside every closet, behind appliances and along every baseboard. If timing is tight, let us know and we’ll plan around it.'],
+  ['Do I need to be there?', 'No. Many clients leave a key or lockbox code. We’re fully insured and background-checked.'],
+  ['Do you also do move-in cleans?', 'Yes. A move-in clean gives you a fresh start before you unpack—especially helpful after a previous tenant or a renovation.'],
+  ['What if my landlord finds something we missed?', 'Let us know within 24 hours and we’ll come back to fix it—no charge, no hassle.'],
+];
+servicePage({
+  route: '/move-out-cleaning',
+  title: 'Move-Out Cleaning in Wilmington, NC | Intracoastal Cleaning',
+  description: 'Move-out and move-in cleaning in Wilmington, Leland and the Cape Fear coast. Deposit-ready detail inside cabinets and appliances. Free quotes.',
+  crumb: 'Move-out cleaning',
+  serviceType: 'Move-out cleaning',
+  schemaDescription: 'Move-out and move-in cleaning for renters, sellers, landlords and property managers.',
+  preset: 'Move-in / move-out cleaning',
+  faqItems: moveFaq,
+  heroOpts: { image: 'photo-1624137527136-66e631bdaa0e', alt: 'Stacked cardboard moving boxes against a brown wall', eyebrow: 'Move-out &amp; move-in cleaning', title: 'Move-out cleaning in Wilmington, NC', text: 'Hand over the keys with confidence. We clean the details landlords, property managers and buyers actually check.' },
+  body: `
+<section class="section">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow">Why it matters</span>
+      <h2>The difference between a full deposit and a deduction</h2>
+      <p>Landlords and property managers in Wilmington expect a rental returned in move-in condition, and the kitchen and bathrooms are where most deductions happen. Selling? Buyers notice the same things at the final walkthrough.</p>
+      <p>We clean every surface, inside every cabinet and behind every appliance—so you can spend the last days of your move packing, not scrubbing.</p>
+      <ul class="checks"><li>Renters protecting a security deposit</li><li>Homeowners preparing for closing or listing photos</li><li>Landlords and property managers turning units between tenants</li><li>New owners and tenants who want a fresh start</li></ul>
+    </div>
+    <img src="${img('photo-1624137527136-66e631bdaa0e', 900, 720)}" alt="Moving boxes stacked in an empty room" loading="lazy" width="900" height="720">
+  </div>
+</section>
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">What’s included</span><h2>A room-by-room, deposit-ready clean</h2></div>
+    ${checkGroups([
+      ['Kitchen', ['Inside the refrigerator, oven and microwave', 'Inside every cabinet and drawer', 'Stovetop, range hood and backsplash', 'Sink, faucet and countertops']],
+      ['Bathrooms', ['Toilet, tub and shower, including grout', 'Vanity, sink, mirrors and fixtures', 'Inside medicine cabinets and drawers', 'Floors, especially around the toilet base']],
+      ['Bedrooms &amp; living areas', ['Baseboards and door frames', 'Interior windows', 'Ceiling fans and light fixtures', 'Floors throughout']],
+      ['Often missed', ['Window sills and tracks', 'Light switches and door handles', 'Closet interiors', 'Garage sweep-out (on request)']],
+    ])}
+    <p style="margin-top:24px">Doing some of it yourself? Use our free <a href="/blog/the-ultimate-move-out-cleaning-checklist-for-wilmington-renters">move-out cleaning checklist for Wilmington renters</a>.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">How it works</span><h2>Simple, around your moving day</h2></div>
+    ${steps([
+      ['Get a quote', 'Tell us the size of the home, its condition and your move-out date. We usually reply within 24 hours.'],
+      ['Pick your date', 'Ideally after the furniture is out and before the final walkthrough.'],
+      ['We clean', 'Our team brings everything we need. You don’t have to be there.'],
+      ['Hand over the keys', 'If anything isn’t right, tell us within 24 hours and we’ll come back and fix it.'],
+    ])}
+  </div>
+</section>`,
+});
+
+// Vacation rentals
+const rentalFaq = [
+  ['Can you clean the same day as my guest checkout?', 'Yes. We offer same-day turnover service for most bookings. Regular hosts can set up recurring service tied to their booking calendar.'],
+  ['Who provides linens and supplies?', 'Hosts provide linens, toiletries and guest supplies. We change the beds, restock from your supplies, and bring all of our own cleaning products and equipment.'],
+  ['Will you tell me if something is damaged?', 'Yes. Every turnover includes a quick inspection, and we’ll let you know about damage or maintenance issues we spot.'],
+  ['Do you do deep cleans for rentals?', 'Yes. We recommend a pre-season deep clean—baseboards, fans, window tracks, inside cabinets, behind furniture—before the summer rush.'],
+  ['Which areas do you cover?', `We clean rentals in ${site.areas.slice(0, -1).join(', ')} and ${site.areas.at(-1)}.`],
+];
+servicePage({
+  route: '/vacation-rental-cleaning',
+  title: 'Airbnb & Vacation Rental Cleaning in Wilmington, NC',
+  description: 'Airbnb and vacation rental turnover cleaning in Wilmington, Wrightsville Beach and Carolina Beach. Same-day turnovers, pre-season deep cleans. Free quotes.',
+  crumb: 'Vacation rental cleaning',
+  serviceType: 'Vacation rental turnover cleaning',
+  schemaDescription: 'Airbnb and vacation rental turnover cleaning and pre-season deep cleaning for short-term rental hosts.',
+  preset: 'Airbnb / vacation rental turnover',
+  faqItems: rentalFaq,
+  heroOpts: { image: 'photo-1684182309189-a1384f3d7d4c', alt: 'Guest bedroom with a white bed, blue blanket and framed artwork', eyebrow: 'Airbnb &amp; vacation rental cleaning', title: 'Turnovers that protect your five-star reviews', text: 'Same-day turnover cleaning for hosts in Wilmington, Wrightsville Beach and Carolina Beach.' },
+  body: `
+<section class="section">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow">Built for hosts</span>
+      <h2>Your next guest might book tonight</h2>
+      <p>The difference between a five-star review and a complaint usually comes down to cleanliness. We give hosts fast, consistent turnovers—the same checklist, in the same order, every time—so every guest walks into the same spotless rental.</p>
+      <p>Coastal rentals have their own challenges: sand in every track and rug, a salty film on glass, and humidity that turns into musty smells. We clean for all of it.</p>
+      <ul class="checks"><li>Same-day turnovers for most bookings</li><li>Recurring service tied to your booking calendar</li><li>Damage and maintenance issues flagged right away</li></ul>
+    </div>
+    <img src="${img('photo-1591825729269-caeb344f6df2', 900, 720)}" alt="Bright living room with an angled ceiling and large windows" loading="lazy" width="900" height="720">
+  </div>
+</section>
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">What’s included</span><h2>Every turnover, every time</h2></div>
+    ${checkGroups([
+      ['Turnover clean', ['Full kitchen and bathroom cleaning', 'Surface wipe-down throughout', 'Floors vacuumed and mopped', 'Trash removal and dishes']],
+      ['Guest-ready', ['Linen change and bed making (host linens)', 'Restocking toiletries and supplies (host supplies)', 'Quick inspection for damage or maintenance']],
+      ['Pre-season deep clean', ['Baseboards, trim and door frames', 'Ceiling fans and light fixtures', 'Window tracks and sliders (sand!)', 'Inside cabinets, behind and under furniture']],
+    ])}
+    <p style="margin-top:24px">Getting ready for summer? Read <a href="/blog/preparing-your-vacation-rental-for-peak-season-on-wrightsville-beach">how to prepare your vacation rental for peak season</a>.</p>
+  </div>
+</section>`,
+});
+
+// Post-construction
+const constructionFaq = [
+  ['How far in advance should I book a post-construction clean?', 'We recommend booking as soon as you have a target completion date. We can often accommodate jobs with just a few days’ notice.'],
+  ['When should the clean happen?', 'After construction work, inspections and punch-list items are complete, and before furniture moves in or your final walkthrough.'],
+  ['How much does it cost?', 'It depends on square footage, the type of project and how much dust and residue is left. For larger jobs we’ll visit the site and give you a detailed quote before any work begins.'],
+  ['Do you remove construction debris?', 'We remove dust, small debris and residue. Bulk materials and dumpster haul-off are usually handled by your contractor—ask us if you need help coordinating.'],
+  ['Do you clean commercial projects too?', 'Yes. We clean renovated and newly built homes, offices and retail spaces.'],
+];
+servicePage({
+  route: '/post-construction-cleaning',
+  title: 'Post-Construction Cleaning in Wilmington, NC | Intracoastal Cleaning',
+  description: 'Post-construction and renovation cleaning in Wilmington, NC for homeowners, builders and businesses. Fine dust, paint and residue removed. Free quotes.',
+  crumb: 'Post-construction cleaning',
+  serviceType: 'Post-construction cleaning',
+  schemaDescription: 'Post-construction and post-renovation detail cleaning for homes and commercial spaces.',
+  preset: 'Post-construction cleanup',
+  faqItems: constructionFaq,
+  heroOpts: { image: 'photo-1618832515490-e181c4794a45', alt: 'Kitchen under renovation with plastic sheeting and a step ladder', eyebrow: 'Post-construction cleaning', title: 'Post-construction cleaning in Wilmington, NC', text: 'Contractors build. We clean up after—so your new or renovated space is truly ready to use.' },
+  body: `
+<section class="section">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow">Why it matters</span>
+      <h2>“Broom clean” isn’t move-in ready</h2>
+      <p>Renovations and new builds leave fine drywall dust on every surface and inside every cabinet, plus paint splatters, adhesive residue and protective film. Regular cleaning can’t touch it—and wiping it the wrong way can scratch new finishes.</p>
+      <p>Construction dust also irritates lungs and gets pulled into your HVAC system. A proper detail clean protects your new surfaces and your air.</p>
+      <ul class="checks"><li>Homeowners finishing a renovation</li><li>General contractors and builders</li><li>Property managers and real estate agents preparing listings</li><li>Businesses opening a new or remodeled space</li></ul>
+    </div>
+    <img src="${img('photo-1618832515490-e181c4794a45', 900, 720)}" alt="Renovated kitchen with plastic sheeting over cabinets" loading="lazy" width="900" height="720">
+  </div>
+</section>
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">What’s included</span><h2>Detail work, top to bottom</h2></div>
+    ${checkGroups([
+      ['Dust removal', ['Walls, ceilings, ledges and trim', 'Inside cabinets, closets and drawers', 'Light fixtures and switches', 'Ceiling fans and high areas']],
+      ['Residue &amp; finishes', ['Paint overspray and splatters', 'Stickers, labels and protective film', 'Adhesive and caulk residue', 'Interior windows and glass']],
+      ['Final detail', ['Fixtures and appliances, inside and out', 'Floors cleaned and small debris removed', 'Baseboards, doors and hardware', 'Touch-up before walkthrough or move-in']],
+    ])}
+    <p style="margin-top:24px">Learn more in <a href="/blog/post-construction-cleaning-whats-involved-and-why-it-matters">post-construction cleaning: what’s involved and why it matters</a>.</p>
+  </div>
+</section>`,
+});
+
+// ---------- town pages ----------
+for (const t of TOWNS) {
+  const route = '/areas/' + t.slug;
+  const townFaq = [
+    ...t.faq,
+    ...(PRICE_FROM ? [['How much does house cleaning cost?', `House cleaning starts at ${priceText}. Your quote depends on the size of your home, its condition and the service you choose.`]] : []),
+    ['Are you insured?', 'Yes. We’re fully licensed and insured, and every team member is background-checked.'],
+  ];
+  pages[route] = layout({
+    route,
+    title: t.title,
+    description: t.description,
+    schema: [faqSchema(townFaq), breadcrumbSchema([['Home', '/'], [`${t.name}, NC`, route]])],
+    body: `
+${hero({ image: t.image, alt: t.imageAlt, eyebrow: `${t.name} · ${t.county}`, title: t.h1, text: t.lede })}
+${trust}
+<section class="section">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow">Serving ${t.name}</span>
+      <h2>Locally owned, just down the road</h2>
+      ${t.intro.map((p) => `<p>${p}</p>`).join('')}
+      ${t.blog ? `<p><a href="${t.blog}">Read our guide for ${t.name} hosts →</a></p>` : ''}
+    </div>
+    <div class="features" style="grid-template-columns:1fr">${t.notes.map(([h, p]) => `<div class="feature"><h3>${h}</h3><p>${p}</p></div>`).join('')}</div>
+  </div>
+</section>
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">Services in ${t.name}</span><h2>Popular with ${t.name} clients</h2></div>
+    ${serviceTiles(t.services)}
+  </div>
+</section>
+<section class="section">
+  <div class="wrap split" style="align-items:start">
+    <div><span class="eyebrow">Nearby</span><h2>We also clean in</h2>${areasList(t.nearby)}<p style="color:var(--muted)">See our full <a href="/residential-services">house cleaning</a> and <a href="/commercial-services">commercial cleaning</a> services.</p></div>
+    <div><span class="eyebrow">FAQ</span><h2>Questions from ${t.name}</h2>${faq(townFaq)}</div>
+  </div>
+</section>
+${quoteSection()}`,
   });
 }
 

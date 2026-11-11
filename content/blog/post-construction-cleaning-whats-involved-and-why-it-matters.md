@@ -138,4 +138,4 @@ When post-construction cleaning is done properly, you walk into a space that's t
 
 That fresh start is worth the investment.
 
-Intracoastal Cleaning offers post-construction cleaning for residential and commercial projects throughout Wilmington and the Cape Fear coast. Whether you've renovated a single bathroom or built a new home, we'll get your space move-in ready. [Get a quote for your project.](/contact)
+Intracoastal Cleaning offers [post-construction cleaning](/post-construction-cleaning) for residential and commercial projects throughout Wilmington and the Cape Fear coast. Whether you've renovated a single bathroom or built a new home, we'll get your space move-in ready. [Get a quote for your project.](/contact)

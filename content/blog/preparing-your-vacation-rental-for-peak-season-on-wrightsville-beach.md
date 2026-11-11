@@ -86,4 +86,4 @@ A well-prepared vacation rental earns more. Higher nightly rates. Better reviews
 
 The work you put in before Memorial Day pays dividends all summer long.
 
-Need help getting your Wrightsville Beach rental ready for peak season? Intracoastal Cleaning offers deep cleaning and turnover services for vacation properties across the Cape Fear coast. [Contact us for a quote.](/contact)
+Need help getting your Wrightsville Beach rental ready for peak season? Intracoastal Cleaning offers deep cleaning and [vacation rental turnover services](/vacation-rental-cleaning) for properties on [Wrightsville Beach](/areas/wrightsville-beach-nc), [Carolina Beach](/areas/carolina-beach-nc) and across the Cape Fear coast. [Contact us for a quote.](/contact)
