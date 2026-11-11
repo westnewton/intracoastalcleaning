@@ -1,4 +1,5 @@
 title: What to Expect From Your First Professional Cleaning
+seoTitle: What to Expect From Your First Professional Cleaning
 description: Never hired a cleaner before? Here's exactly what happens during your first professional cleaning—from booking to walkthrough to coming home to a spotless house.
 date: 2026-01-11
 image: photo-1584622650111-993a426fbf0a
@@ -126,4 +127,4 @@ The biggest shift isn't the first cleaning—it's what comes after. Once you've 
 
 Most people find that regular cleaning service isn't a luxury. It's a practical choice that pays off in time, energy, and quality of life.
 
-Intracoastal Cleaning offers free quotes and a satisfaction guarantee. Our residential team uses 100% organic products. Serving Wilmington, Wrightsville Beach, and the Cape Fear coast. [Book your first cleaning.](/contact)
+Intracoastal Cleaning offers free quotes and a satisfaction guarantee, and [house cleaning](/residential-services) starts at $149. Our residential team uses 100% organic products. Serving Wilmington, Wrightsville Beach, and the Cape Fear coast. [Book your first cleaning.](/contact)

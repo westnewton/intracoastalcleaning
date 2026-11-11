@@ -1,4 +1,6 @@
 title: Post-Construction Cleaning: What's Involved and Why It Matters
+seoTitle: Post-Construction Cleaning: What's Involved + Checklist
+updated: 2026-11-11
 description: Renovation complete but your space is covered in dust? Learn what post-construction cleaning involves and why it's essential before moving in.
 date: 2026-01-11
 image: photo-1618832515490-e181c4794a45
@@ -113,6 +115,24 @@ This is not a DIY project for most people. Post-construction cleaning requires:
 Some general contractors include basic cleanup in their scope. But "broom clean" from a contractor is not the same as move-in ready. Most homeowners hire a professional cleaning service for the detail work.
 
 When choosing a cleaner, ask specifically about post-construction experience. Not all cleaning companies offer this service, and it requires different skills than regular house cleaning.
+
+## Post-Construction Cleaning Checklist
+
+Use this as your final walkthrough list before furniture—or you—move in:
+
+- Dust removed from walls, ceilings, ledges, trim, and the tops of door frames
+- Inside every cabinet, drawer, and closet wiped clean
+- Stickers, labels, and protective film removed from windows, fixtures, and appliances
+- Paint drips, overspray, and adhesive residue removed without scratching finishes
+- Interior windows, sills, and tracks cleaned
+- Light fixtures, ceiling fans, and switch plates dusted and wiped
+- Bathroom fixtures, tile, and grout haze cleaned
+- Appliances cleaned inside and out
+- Vents and returns dusted
+- Floors vacuumed and mopped—twice if the dust was heavy
+- Baseboards, doors, and hardware wiped down
+
+If you'd rather hand the whole list to a professional, see our [post-construction cleaning](/post-construction-cleaning) service.
 
 ## Timing Matters
 

@@ -1,4 +1,5 @@
 title: 5 Signs It's Time to Hire a Professional Cleaning Service
+seoTitle: 5 Signs It's Time to Hire a Professional Cleaning Service
 description: Feeling overwhelmed by housework? Here are 5 clear signs it's time to hire a professional cleaner—and why Wilmington homeowners are making the switch.
 date: 2026-01-11
 image: photo-1583847268964-b28dc8f51f92
@@ -66,4 +67,4 @@ If you recognized yourself in any of these signs, it might be time. You don't ha
 
 Most people don't go back.
 
-Intracoastal Cleaning serves Wilmington, Wrightsville Beach, and the Cape Fear region. Our residential cleaning uses 100% organic products—safe for your family, your pets, and your home. [Get a free quote.](/contact)
+Intracoastal Cleaning serves Wilmington, Wrightsville Beach, and the Cape Fear region. Our residential cleaning uses 100% organic products—safe for your family, your pets, and your home—and [house cleaning](/residential-services) starts at $149. [Get a free quote.](/contact)

@@ -238,7 +238,15 @@ function md2html(md) {
     return `<p>${inline(b)}</p>`;
   }).join('\n');
 }
-const posts = fs.readdirSync('content/blog').filter((f) => f.endsWith('.md')).map((f) => parsePost(path.join('content/blog', f))).sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title));
+// Scheduling: a post dated in the future stays hidden until that date (Wilmington time).
+// Production rebuilds every morning a post is due (.github/workflows/publish-scheduled-posts.yml).
+// Vercel preview deployments show scheduled posts so they can be reviewed before they go live.
+const todayET = process.env.SITE_TODAY || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(new Date()); // SITE_TODAY=YYYY-MM-DD to test a future date
+const showScheduled = process.env.VERCEL_ENV === 'preview' || process.env.SHOW_SCHEDULED === '1';
+const allPosts = fs.readdirSync('content/blog').filter((f) => f.endsWith('.md')).map((f) => parsePost(path.join('content/blog', f)));
+const scheduled = allPosts.filter((p) => p.date > todayET);
+const posts = allPosts.filter((p) => showScheduled || p.date <= todayET).sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title));
+if (scheduled.length) console.log(`Scheduled posts (${showScheduled ? 'shown in this preview' : 'hidden until their date'}): ${scheduled.map((p) => `${p.date} ${p.slug}`).join(', ')}`);
 const fmtDate = (d) => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 const postCard = (p) => `<a class="card" href="/blog/${p.slug}"><img src="${img(p.image, 700, 525)}" alt="${esc(p.imageAlt)}" loading="lazy" width="700" height="525"><div class="card-body"><span class="post-meta">${fmtDate(p.date)}</span><h3 style="margin-top:6px">${esc(p.title)}</h3><p>${esc(p.description)}</p><span class="card-link">Read article →</span></div></a>`;
 
@@ -583,7 +591,7 @@ for (const p of posts) {
     ogType: 'article',
     ogImage: img(p.image, 1200, 630),
     schema: [
-      { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, description: p.description, datePublished: p.date, dateModified: p.date, image: img(p.image, 1200, 630), mainEntityOfPage: site.url + route, author: { '@type': 'Organization', name: site.name, url: site.url }, publisher: { '@id': site.url + '/#business' } },
+      { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, description: p.description, datePublished: p.date, dateModified: p.updated || p.date, image: img(p.image, 1200, 630), mainEntityOfPage: site.url + route, author: { '@type': 'Organization', name: site.name, url: site.url }, publisher: { '@id': site.url + '/#business' } },
       breadcrumbSchema([['Home', '/'], ['Blog', '/blog'], [p.title, route]]),
     ],
     body: `
@@ -591,7 +599,7 @@ for (const p of posts) {
   <div class="narrow">
     <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/blog">Blog</a></nav>
     <h1 style="font-size:clamp(2rem,4.4vw,3rem)">${esc(p.title)}</h1>
-    <p class="post-meta">${fmtDate(p.date)} · Intracoastal Cleaning</p>
+    <p class="post-meta">${fmtDate(p.date)}${p.updated && p.updated > p.date ? ` · Updated ${fmtDate(p.updated)}` : ''} · Intracoastal Cleaning${p.date > todayET ? ` · <strong>Scheduled — not live yet</strong>` : ''}</p>
     <img class="post-hero" src="${img(p.image, 1400, 700)}" srcset="${img(p.image, 760, 380)} 760w, ${img(p.image, 1400, 700)} 1400w" sizes="(max-width: 800px) 100vw, 760px" alt="${esc(p.imageAlt)}" width="1400" height="700">
     <div class="prose">${md2html(p.md)}</div>
     <div class="post-cta"><div><h3>Want us to handle it?</h3><p style="margin:4px 0 0;color:var(--muted)">Free, no-pressure quotes for homes and businesses across the Cape Fear coast.</p></div><a class="btn btn-primary" href="/contact">Get a free quote</a></div>
@@ -832,10 +840,10 @@ fs.writeFileSync(path.join(DIST, '404.html'), notFound);
 for (const [route, html] of Object.entries(pages)) write(route, html);
 
 // sitemap + robots
-const today = new Date().toISOString().slice(0, 10);
+const today = todayET;
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${Object.keys(pages).map((r) => { const post = posts.find((p) => '/blog/' + p.slug === r); return `  <url><loc>${site.url}${r === '/' ? '/' : r}</loc><lastmod>${post ? post.date : today}</lastmod></url>`; }).join('\n')}
+${Object.keys(pages).map((r) => { const post = posts.find((p) => '/blog/' + p.slug === r); return `  <url><loc>${site.url}${r === '/' ? '/' : r}</loc><lastmod>${post ? post.updated || post.date : today}</lastmod></url>`; }).join('\n')}
 </urlset>`;
 fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap);
 fs.writeFileSync(path.join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`);
