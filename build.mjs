@@ -148,7 +148,7 @@ const ctaBand = (title = 'Ready for a cleaner space?', text = 'Tell us about you
   <div class="actions"><a class="btn btn-light" href="/contact">Get a free quote</a>${site.phone ? `<a class="btn btn-outline-light" href="${telHref(site.phone)}">Call ${site.phone}</a>` : ''}</div></div>
 </section>`;
 
-const serviceOptions = ['Residential – standard clean', 'Residential – deep clean', 'Recurring house cleaning', 'Move-out / move-in', 'Post-construction', 'Airbnb / vacation rental turnover', 'Commercial / office', 'Estate or hoarding cleanup', 'Something else'];
+const serviceOptions = ['House cleaning', 'Deep cleaning', 'Move-in / move-out cleaning', 'Post-construction cleanup', 'Airbnb / vacation rental turnover', 'Office / commercial cleaning', 'Estate or hoarding cleanup', 'Not sure yet'];
 
 const quoteForm = (preset = '') => `
 <div class="form-card">
@@ -161,11 +161,11 @@ const quoteForm = (preset = '') => `
     <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off">
     <div class="form-grid">
       <div><label for="f-first">First name</label><input id="f-first" name="first_name" autocomplete="given-name" required></div>
-      <div><label for="f-last">Last name</label><input id="f-last" name="last_name" autocomplete="family-name" required></div>
-      <div><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
+      <div><label for="f-last">Last name <span class="opt">(optional)</span></label><input id="f-last" name="last_name" autocomplete="family-name"></div>
+      <div><label for="f-phone">Phone <span class="opt">(optional)</span></label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div>
       <div><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
-      <div><label for="f-service">Service needed</label><select id="f-service" name="service" required><option value="">Select one</option>${serviceOptions.map((o) => `<option${o === preset ? ' selected' : ''}>${o}</option>`).join('')}</select></div>
-      <div><label for="f-area">Town</label><select id="f-area" name="town" required><option value="">Select one</option>${site.areas.map((a) => `<option>${a}</option>`).join('')}<option>Other</option></select></div>
+      <div><label for="f-service">What do you need? <span class="opt">(optional)</span></label><select id="f-service" name="service"><option value="">Choose a service</option>${serviceOptions.map((o) => `<option${o === preset ? ' selected' : ''}>${o}</option>`).join('')}</select></div>
+      <div><label for="f-area">Town <span class="opt">(optional)</span></label><select id="f-area" name="town"><option value="">Choose your town</option>${site.areas.map((a) => `<option>${a}</option>`).join('')}<option>Other</option></select></div>
       <div class="full"><label for="f-msg">Tell us about your space <span class="opt">(optional)</span></label><textarea id="f-msg" name="message" placeholder="Bedrooms/bathrooms or square footage, how often you'd like service, pets, timing…"></textarea></div>
     </div>
     <button class="btn btn-primary" type="submit">Request my free quote</button>

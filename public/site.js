@@ -17,7 +17,7 @@ document.querySelectorAll('.quote-form').forEach((form) => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const invalid = [...form.querySelectorAll('[required]')].find((el) => !el.value.trim() || !el.checkValidity());
-    if (invalid) { show('err', 'Please fill in your name, phone, email, service and town so we can get back to you.'); invalid.focus(); return; }
+    if (invalid) { show('err', 'Please add your first name and a valid email address so we can get back to you.'); invalid.focus(); return; }
     if (!form.access_key.value) { show('err', 'This form isn’t connected yet. Please email info@intracoastalcleaning.com and we’ll get right back to you.'); return; }
 
     const data = Object.fromEntries(new FormData(form));
