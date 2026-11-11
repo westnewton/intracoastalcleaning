@@ -1,4 +1,5 @@
 title: The Ultimate Move-Out Cleaning Checklist for Wilmington Renters
+updated: 2026-11-11
 seoTitle: Move-Out Cleaning Checklist for Wilmington Renters | Intracoastal Cleaning
 description: Complete move-out cleaning checklist for Wilmington apartments and rentals. Room-by-room guide to getting your security deposit back. Free estimates available.
 date: 2026-01-09
@@ -95,6 +96,16 @@ Once everything is clean:
 - Make sure all personal items are removed, including from outdoor areas
 - Take dated photos of every room as proof of condition
 - Do a final walkthrough with your landlord if possible
+
+## How Much Does Move-Out Cleaning Cost?
+
+Most professional move-out cleans in the Wilmington area range from **$200 to $500**. Where your home lands in that range depends on:
+
+- Square footage and the number of bathrooms
+- Condition—how much buildup is in the oven, refrigerator, and showers
+- Extras, like a garage sweep-out
+
+Compared with a typical security deposit, a professional clean often pays for itself. [See what our move-out cleaning includes.](/move-out-cleaning)
 
 ## When to Call a Professional
 

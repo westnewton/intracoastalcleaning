@@ -1,0 +1,43 @@
+# Publishes scheduled blog posts.
+# The site hides posts dated in the future. Every morning this checks whether a post is
+# dated today (Wilmington time) and, if so, asks Vercel to rebuild the live site.
+#
+# One-time setup: Vercel → project → Settings → Git → Deploy Hooks → create a hook for
+# branch "main", then GitHub → repo → Settings → Secrets and variables → Actions →
+# New repository secret named VERCEL_DEPLOY_HOOK with the hook URL as its value.
+name: Publish scheduled blog posts
+
+on:
+  schedule:
+    - cron: '17 11 * * *' # every day ~6:17am EST / 7:17am EDT
+  workflow_dispatch: # "Run workflow" button: rebuild now
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Look for a post dated today
+        id: check
+        run: |
+          today=$(TZ=America/New_York date +%F)
+          due=$(grep -l "^date: $today" content/blog/*.md || true)
+          if [ -n "$due" ]; then
+            echo "Posts going live today ($today):"; echo "$due"
+            echo "due=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No posts scheduled for $today."
+          fi
+
+      - name: Rebuild the live site on Vercel
+        if: steps.check.outputs.due == 'true' || github.event_name == 'workflow_dispatch'
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::The VERCEL_DEPLOY_HOOK secret is not set, so the post can't go live. See the setup note at the top of this file."
+            exit 1
+          fi
+          curl -fsS -X POST "$HOOK"
+          echo "Rebuild requested."

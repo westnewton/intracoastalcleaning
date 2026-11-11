@@ -1,5 +1,6 @@
 title: Preparing Your Vacation Rental for Peak Season on Wrightsville Beach
-seoTitle: Preparing Your Vacation Rental for Peak Season | Wrightsville Beach Guide
+seoTitle: Vacation Rental Prep & Airbnb Cleaning Checklist | Wrightsville Beach
+updated: 2026-11-11
 description: Get your Wrightsville Beach vacation rental ready for summer. Deep cleaning tips, turnover systems, and beach-specific maintenance for Airbnb and VRBO hosts.
 date: 2026-01-09
 image: photo-1684182309189-a1384f3d7d4c
@@ -61,6 +62,45 @@ During peak season, you might have back-to-back bookings with only a few hours b
 **Laundry logistics:** With same-day turnovers, on-site laundry isn't always enough. Consider a laundry service or keep backup sets of all linens.
 
 **Restocking:** Build restocking into every turnover. Toiletries, coffee, cleaning supplies under the sink. Small touches matter.
+
+## Airbnb Cleaning Checklist for Every Turnover
+
+Give this to your cleaning team—or use it to check their work. The same tasks, in the same order, every time.
+
+**Kitchen:**
+
+- Wash, dry, and put away all dishes; run and empty the dishwasher
+- Wipe counters, backsplash, stovetop, and appliance fronts
+- Clean inside the microwave and check the fridge for leftovers
+- Empty trash and recycling; replace liners
+- Restock dish soap, sponges, paper towels, and coffee
+
+**Bathrooms:**
+
+- Scrub the toilet, shower or tub, sink, and mirror
+- Check drains and remove hair
+- Replace towels and bath mats
+- Restock toilet paper and toiletries
+
+**Bedrooms:**
+
+- Strip and remake beds with fresh linens
+- Check under beds and in drawers and closets for left-behind items
+- Dust surfaces, nightstands, and lamps
+
+**Living areas and outdoor spaces:**
+
+- Vacuum and mop all floors—sliders and entryways get the most sand
+- Wipe remote controls, light switches, and door handles
+- Sweep porches and decks; reset outdoor furniture and beach gear
+
+**Before you lock up:**
+
+- Note any damage or maintenance issues and photograph them
+- Set the thermostat and close windows and blinds
+- Do a final walkthrough with fresh eyes—what will the next guest see first?
+
+Want a team that runs this checklist for you? See our [vacation rental cleaning](/vacation-rental-cleaning).
 
 ## First Impressions Count
 
