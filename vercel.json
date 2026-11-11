@@ -1,0 +1,73 @@
+{
+  "buildCommand": "node build.mjs",
+  "outputDirectory": "dist",
+  "framework": null,
+  "installCommand": "",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/appointments",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/cart",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/services-store",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/services-store/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/span-classsqsrte-text-color-custom-stylecolor-rgb7-7-7why-we-use-100-organic-products-in-our-residential-cleaningspan",
+      "destination": "/blog/why-we-use-100-organic-products-in-our-residential-cleaning",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    },
+    {
+      "source": "/(styles.css|site.js|favicon.svg|logo.svg)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
+        }
+      ]
+    }
+  ]
+}
